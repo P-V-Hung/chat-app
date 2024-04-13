@@ -12,8 +12,7 @@ class HomeController extends Controller
     public function home(){
         $roles = Role::all();
         $friends = (new FriendController)->index();
-//        $social = $this->setSocial();
-//        dd($social);
+        $social = $this->setSocial();
         return view('homepage.home',compact('roles','friends','social'));
     }
 

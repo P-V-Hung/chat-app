@@ -10,7 +10,7 @@
             @foreach($roles as $role)
             <li class="list-group-item py-3 px-0">
                 <div class="form-item custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" {{ auth()->user()->roles->contains('id', $role->id) ? 'checked' : '' }} id="customSwitch{{$loop->index + 1}}">
+                    <input type="checkbox" class="custom-control-input" value="{{ $role->id }}" {{ auth()->user()->roles->contains('id', $role->id) ? 'checked' : '' }} id="customSwitch{{$loop->index + 1}}">
                     <label class="custom-control-label" for="customSwitch{{$loop->index + 1}}">{{$role->name}}</label>
                 </div>
             </li>
@@ -18,3 +18,14 @@
         </ul>
     </div>
 </div>
+@push('script')
+    <script>
+        $(document).on('change','.custom-control-input',function(){
+            let id = $(this).val();
+            axios.post("{{route('toggle.roles')}}",{id: id})
+                .then(response => {
+                    console.log(response);
+                })
+        })
+    </script>
+@endpush

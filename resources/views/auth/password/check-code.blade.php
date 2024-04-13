@@ -7,7 +7,7 @@
 
     <!-- logo -->
     <div class="logo my-5">
-        <img src="dist/media/img/logo-full-2x.png" alt="logo">
+        <img src="{{asset('assets/media/img/logo-full-2x.png')}}" alt="logo">
     </div>
     <!-- ./ logo -->
 

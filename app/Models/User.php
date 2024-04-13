@@ -34,12 +34,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    
     public function profile(){
         return $this->hasOne(Profile::class);
     }
 
     public function socials(){
-        return $this->belongsToMany(Social::class,'social_user','user_id','social_id');
+        return $this->belongsToMany(Social::class);
     }
 
     public function messageTo(){
@@ -47,6 +48,12 @@ class User extends Authenticatable
     }
     public function messageFrom(){
         return $this->hasMany(Message::class,'from_id');
+    }
+
+    public function receivesBroadcastNotificationsOn()
+    {
+        \Log::debug('notification.friend.toggle.'.$this->id);
+        return 'notification.friend.toggle.'.$this->id;
     }
 
 }

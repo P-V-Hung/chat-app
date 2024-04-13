@@ -9,5 +9,5 @@ class Friend extends Model
 {
     use HasFactory;
     protected $table = 'friends';
-    public $timestamps = ['created_at'];
+    protected $fillable = ['status','from_id','to_id','message'];
 }

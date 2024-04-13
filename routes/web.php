@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function(){
     Route::put('user/change-message',[UserController::class,'setMessage'])->name('change.message');
     Route::post('user/change-profile',[UserController::class,'updateProfile'])->name('change.profile');
     Route::post('user/change-socials',[UserController::class,'updateSocials'])->name('change.social');
+    Route::delete('user/notifications/{id}',[UserController::class,'deleteNotification'])->name('delete.notification');
+    Route::post('user/roles',[UserController::class,'toggleRoles'])->name('toggle.roles');
 
     Route::resource('friend',FriendController::class);
     Route::resource('message',MessageController::class);
@@ -33,7 +35,22 @@ Route::middleware('auth')->group(function(){
 
 
 Route::get('test',function(){
-   $message = \App\Models\Message::find(27);
-   $data = $message->load('from_user');
-   dd($data);
+   $user = \App\Models\User::find(1);
+   $user->notify(new \App\Notifications\SendFriendNotification($user,'đã gửi cho bạn một lời mời kết bạn!','friend'));
+//   broadcast(new \App\Events\SendFriendEvent($user));
+});
+
+Route::get('get',function(){
+   $user = auth()->user();
+   return $user->notifications;
+});
+
+Route::get('delete', function () {
+    $notifications = auth()->user()->notifications;
+
+    foreach ($notifications as $notification) {
+        $notification->delete();
+    }
+
+    return 'Deleted all notifications';
 });

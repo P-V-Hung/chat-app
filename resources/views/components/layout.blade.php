@@ -8,39 +8,39 @@
                         <img src="{{ asset('assets/media/img/logo.png') }}" alt="logo">
                     </a>
                 </li>
-                <li class="navigation-action-button dropright" title="New" data-placement="right">
+                <li class="navigation-action-button dropright" title="Thêm" data-placement="right">
                     <a href="#" data-intro-js="1" data-toggle="dropdown">
                         <i class="mdi mdi-plus"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a href="#" class="dropdown-item" data-left-sidebar="friends">Start Chat</a>
                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#newGroup">Add Group</a>
-                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#intiveUsers">Thêm bạn
-                            bè</a>
+                        <a href="#" class="dropdown-item" data-toggle="modal" id="modal-intiveUsers"
+                           data-target="#intiveUsers">Thêm bạn bè</a>
                     </div>
                 </li>
                 <li>
                     <a class="active" data-intro-js="2" data-left-sidebar="chats" href="#" data-toggle="tooltip"
-                       title="Chats" data-placement="right">
+                       title="Trò chuyện" data-placement="right">
                         <span class="badge badge-warning"></span>
                         <i data-feather="message-circle"></i>
                     </a>
                 </li>
                 <li>
-                    <a data-left-sidebar="friends" href="#" data-toggle="tooltip" title="Friends"
+                    <a data-left-sidebar="friends" href="#" data-toggle="tooltip" title="Bạn bè"
                        data-placement="right">
                         <span class="badge badge-danger"></span>
                         <i data-feather="user"></i>
                     </a>
                 </li>
                 <li>
-                    <a data-left-sidebar="favorites" data-toggle="tooltip" title="Favorites" data-placement="right"
+                    <a data-left-sidebar="favorites" data-toggle="tooltip" title="Yêu thích" data-placement="right"
                        href="#">
                         <i data-feather="star"></i>
                     </a>
                 </li>
                 <li class="brackets">
-                    <a data-left-sidebar="archived" href="#" data-toggle="tooltip" title="Archived"
+                    <a data-left-sidebar="archived" href="#" data-toggle="tooltip" title="Lưu trữ"
                        data-placement="right">
                         <i data-feather="archive"></i>
                     </a>
@@ -59,7 +59,8 @@
                     <div class="dropdown-menu">
                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#editProfile">Chỉnh sửa
                             trang cá nhân</a>
-                        <a href="#" class="dropdown-item" data-right-sidebar="user-profile">Trang cá nhân</a>
+                        <a href="#" class="dropdown-item show-profile" data-email="{{auth()->user()->email}}"
+                           data-right-sidebar="user-profile">Trang cá nhân</a>
                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#settingsModal">Cài
                             đặt</a>
                         <a href="#" class="dropdown-item d-none d-md-block example-app-tour-start">Bắt đầu</a>
@@ -145,9 +146,11 @@
                     @php
                         $countMessage = $friend->messageFrom()->where('seen','<=',1)->count();
                     @endphp
-                    <li data-email="{{$friend->email}}" class="list-group-item-{{$friend->id}} list-group-item {{(($friend->last_message->to_id == auth()->id()) && ($countMessage > 0)) ? 'unread-chat' : ''}}">
+                    <li data-email="{{$friend->email}}"
+                        class="list-group-item-{{$friend->id}} list-group-item {{((optional($friend->last_message)->to_id == auth()->id()) && ($countMessage > 0)) ? 'unread-chat' : ''}}">
                         <div>
-                            <figure class="avatar status-user-{{$friend->id}} {{$friend->is_online != 0 ? 'avatar-state-warning' : ''}} mr-3">
+                            <figure
+                                class="avatar status-user-{{$friend->id}} {{$friend->is_online != 0 ? 'avatar-state-warning' : ''}} mr-3">
                                 <img src="{{$friend->avatar}}" class="rounded-circle" alt="image">
                             </figure>
                         </div>
@@ -155,17 +158,18 @@
                             <div>
                                 <h5>{{$friend->name}}</h5>
                                 @if ($friend->last_message)
-                                    <p class="last-message-{{$friend->id}}">{{($friend->last_message->from_id == auth()->id()) ? 'Bạn: ': ''}}{{ $friend->last_message->body }}</p>
+                                    <p class="last-message-{{$friend->id}}">{{(optional($friend->last_message)->from_id == auth()->id()) ? 'Bạn: ': ''}}{{ $friend->last_message->body }}</p>
                                 @else
                                     <p class="last-message-{{$friend->id}}">Bắt đầu cuộc trò chuyện ngay!</p>
                                 @endif
                             </div>
                             <div class="users-list-action">
-                                @if(($friend->last_message->to_id == auth()->id()) && $countMessage > 0)
+                                @if((optional($friend->last_message)->to_id == auth()->id()) && $countMessage > 0)
                                     <div class="new-message-count">{{$countMessage}}</div>
                                 @endif
                                 @if($friend->last_message)
-                                    <small class="time-new-{{$friend->id}}">{{ $friend->last_message->created_at->format('h:i A') }}</small>
+                                    <small
+                                        class="time-new-{{$friend->id}}">{{ optional($friend->last_message)->created_at->format('h:i A') }}</small>
                                 @endif
                             </div>
                         </div>
@@ -195,35 +199,37 @@
             <!--  -->
             <ul class="list-group list-group-flush">
                 @foreach($friends as $friend)
-                <li class="list-group-item" data-email="{{$friend->email}}">
-                    <div>
-                        <figure class="status-user-{{$friend->id}} avatar mr-3 {{$friend->is_online != 0 ? 'avatar-state-warning' : ''}}">
-                            <img src="{{$friend->avatar}}" class="rounded-circle" alt="image">
-                        </figure>
-                    </div>
-                    <div class="users-list-body">
+                    <li class="list-group-item" data-email="{{$friend->email}}">
                         <div>
-                            <h5>{{$friend->name}}</h5>
-                            <p>{{$friend->email}}</p>
+                            <figure
+                                class="status-user-{{$friend->id}} avatar mr-3 {{$friend->is_online != 0 ? 'avatar-state-warning' : ''}}">
+                                <img src="{{$friend->avatar}}" class="rounded-circle" alt="image">
+                            </figure>
                         </div>
-                        <div class="users-list-action">
-                            <div class="action-toggle">
-                                <div class="dropdown">
-                                    <a data-toggle="dropdown" href="#">
-                                        <i class="mdi mdi-dots-horizontal"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a href="#" class="dropdown-item">Nhắn tin</a>
-                                        <a href="#" data-right-sidebar="user-profile"
-                                           class="dropdown-item">Profile</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a href="#" class="dropdown-item text-danger">Chặn</a>
+                        <div class="users-list-body">
+                            <div>
+                                <h5>{{$friend->name}}</h5>
+                                <p>{{$friend->email}}</p>
+                            </div>
+                            <div class="users-list-action">
+                                <div class="action-toggle">
+                                    <div class="dropdown">
+                                        <a data-toggle="dropdown" href="#">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a href="#" class="dropdown-item">Nhắn tin</a>
+                                            <a href="#" data-email="{{$friend->email}}"
+                                               data-right-sidebar="user-profile" class="show-profile dropdown-item">Trang
+                                                cá nhân</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a href="#" class="dropdown-item text-danger">Chặn</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
                 @endforeach
             </ul>
         </div>
@@ -423,7 +429,8 @@
                     <img src="{{ asset('assets/media/svg/chat_empty.svg') }}" class="img-fluid" alt="image">
                 </div>
             </div>
-            <p class="lead">Chọn một cuộc trò chuyển để bắt đầu hoặc <a href="#" data-left-sidebar="friends">thêm 1 cuộc trò chuyện mới</a>.</p>
+            <p class="lead">Chọn một cuộc trò chuyển để bắt đầu hoặc <a href="#" data-left-sidebar="friends">thêm 1 cuộc
+                    trò chuyện mới</a>.</p>
         </div>
         <div class="chat-header">
             <div class="chat-header-user">
@@ -462,8 +469,9 @@
                             <i class="mdi mdi-dots-horizontal"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" data-right-sidebar="user-profile" class="dropdown-item">Profile</a>
-                            <a href="#" class="dropdown-item example-close-selected-chat" id="close-chat">Đóng đoạn chat</a>
+                            <a href="#" data-right-sidebar="user-profile" class="dropdown-item show-profile" id="show-prifile" data-email="{{auth()->user()->email}}">Trang cá nhân</a>
+                            <a href="#" class="dropdown-item example-close-selected-chat" id="close-chat">Đóng đoạn
+                                chat</a>
                             <a href="#" class="dropdown-item">Add to archive</a>
                             <a href="#" class="dropdown-item example-delete-chat">Delete</a>
                             <div class="dropdown-divider"></div>
@@ -475,18 +483,18 @@
         </div>
         <div class="chat-body">
             <div class="messages">
-{{--                <div class="message-item messages-divider sticky-top" data-label="Yesterday"></div>--}}
-{{--                <div class="message-item in in-typing">--}}
-{{--                    <div class="message-content">--}}
-{{--                        <div class="message-text">--}}
-{{--                            <div class="writing-animation">--}}
-{{--                                <div class="writing-animation-line"></div>--}}
-{{--                                <div class="writing-animation-line"></div>--}}
-{{--                                <div class="writing-animation-line"></div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
+                {{--                <div class="message-item messages-divider sticky-top" data-label="Yesterday"></div>--}}
+                {{--                <div class="message-item in in-typing">--}}
+                {{--                    <div class="message-content">--}}
+                {{--                        <div class="message-text">--}}
+                {{--                            <div class="writing-animation">--}}
+                {{--                                <div class="writing-animation-line"></div>--}}
+                {{--                                <div class="writing-animation-line"></div>--}}
+                {{--                                <div class="writing-animation-line"></div>--}}
+                {{--                            </div>--}}
+                {{--                        </div>--}}
+                {{--                    </div>--}}
+                {{--                </div>--}}
             </div>
         </div>
         <div class="chat-footer">
@@ -550,7 +558,8 @@
                         <a href="#" class="dropdown-item">Video</a>
                     </div>
                 </div>
-                <input type="text" id="message-send" class="form-control form-control-main" placeholder="Nhắn tin ở đây.">
+                <input type="text" id="message-send" class="form-control form-control-main"
+                       placeholder="Nhắn tin ở đây.">
                 <div>
                     <button class="btn btn-primary ml-2 btn-floating" type="submit">
                         <i class="mdi mdi-send"></i>
@@ -563,45 +572,46 @@
 </div>
 @push('script')
     <script>
-        $(document).on('click',".list-group-flush .list-group-item",function(){
-            axios("{{route('friend.show','_email_')}}".replace('_email_',$(this).data('email')))
-                .then(function(response){
+        $(document).on('click', ".list-group-flush .list-group-item", function () {
+            axios("{{route('friend.show','_email_')}}".replace('_email_', $(this).data('email')))
+                .then(function (response) {
                     let user = response.data.data;
                     $("#id-chat-user").val(user.id);
-                    $(".chat-header .chat-header-user .avatar > img").attr('src',user.avatar);
+                    $(".chat-header .chat-header-user .avatar > img").attr('src', user.avatar);
+                    $("#show-prifile").data('email',user.email);
                     $(".chat-header .chat-header-user div h5").text(user.name);
-                    $(".chat-header .chat-header-user div small").addClass('user-chat-status-'+user.id);
-                    $(".chat-header .chat-header-user div small").addClass('user-chat-status-'+$("#id-chat-user").val());
-                    if(user.is_online != 0){
-                        $(".chat-header .chat-header-user .avatar").addClass('avatar-state-success user-chat-'+user.id);
+                    $(".chat-header .chat-header-user div small").addClass('user-chat-status-' + user.id);
+                    $(".chat-header .chat-header-user div small").addClass('user-chat-status-' + $("#id-chat-user").val());
+                    if (user.is_online != 0) {
+                        $(".chat-header .chat-header-user .avatar").addClass('avatar-state-success user-chat-' + user.id);
                         $(".chat-header .chat-header-user div small").text('Online');
-                    }else{
-                        $(".chat-header .chat-header-user .avatar").removeClass('avatar-state-success user-chat-'+user.id);
+                    } else {
+                        $(".chat-header .chat-header-user .avatar").removeClass('avatar-state-success user-chat-' + user.id);
                         $(".chat-header .chat-header-user div small").text(`Offline`);
                     }
                     return user;
                 })
-                .then(function(user){
-                    getMessage(user,1,0);
+                .then(function (user) {
+                    getMessage(user, 1, 0);
                     return user;
                 })
-                .then(function(user){
+                .then(function (user) {
                     let page = 1;
-                    $('.chat-body').on('scroll',function(){
-                        if($('.chat-body')[0].scrollTop == 0){
+                    $('.chat-body').on('scroll', function () {
+                        if ($('.chat-body')[0].scrollTop == 0) {
                             page++;
-                            getMessage(user,page,1);
+                            getMessage(user, page, 1);
                         }
                     })
                 })
         });
 
-        function getMessage(user,page = 1,load){
-            let api = "{{route('message.show','_id_')}}".replace('_id_',user.id);
-            axios(api+"?page="+page)
-                .then(function(response){
+        function getMessage(user, page = 1, load) {
+            let api = "{{route('message.show','_id_')}}".replace('_id_', user.id);
+            axios(api + "?page=" + page)
+                .then(function (response) {
                     let data = response.data;
-                    if(data != []){
+                    if (data != []) {
                         let content = data.map(item => {
                             return `
                                 <div class="message-item ${item.from_id == {{auth()->id()}} ? 'out' : 'in'}">
@@ -634,34 +644,34 @@
                                 </div>
                             `;
                         }).join('');
-                        if(load == 0){
+                        if (load == 0) {
                             $(".messages").html(content);
                             $(".chat-body").scrollTop($(".chat-body").height());
-                        }else{
+                        } else {
                             $(".messages").prepend(content);
                             $('.chat-body').scrollTop(2000);
                         }
-                    }else{
+                    } else {
                         console.log(123);
                     }
                 })
         }
 
-        function setScroll(){
-            $(".chat-body").animate({ scrollTop: $(".chat-body").prop("scrollHeight") }, "slow");
+        function setScroll() {
+            $(".chat-body").animate({scrollTop: $(".chat-body").prop("scrollHeight")}, "slow");
         }
 
         $(document).on("submit", ".chat .chat-footer form", function (e) {
             e.preventDefault();
             let message = $("#message-send").val().trim();
-            if(message === ''){
+            if (message === '') {
                 $("#message-send").val('');
                 $("#message-send").focus();
-            }else{
+            } else {
                 let id = $("#id-chat-user").val();
-                $(".last-message-"+id).text('Bạn: '+message);
-                axios.post('{{route('message.store')}}',{message,id})
-                $(".time-new-"+id).text('{{now()->format('h:i A')}}');
+                $(".last-message-" + id).text('Bạn: ' + message);
+                axios.post('{{route('message.store')}}', {message, id})
+                $(".time-new-" + id).text('{{now()->format('h:i A')}}');
                 let content = `
                     <div class="message-item out">
                         <div class="message-avatar">
@@ -700,15 +710,15 @@
     </script>
     <script type="module">
         Echo.private('send.message.{{auth()->id()}}')
-            .listen('SendMessage',function(e){
+            .listen('SendMessage', function (e) {
                 let message = e.data;
                 let id = message.from_id;
                 let idChat = $("#id-chat-user").val();
-                $(".time-new-"+id).text(message.last_time ?? '{{now()->format('h:i A')}}');
-                $(".last-message-"+id).text(message.body);
-                if(message.from_id == idChat){
-                    axios.put('{{route('message.update','_id_')}}'.replace('_id_',message.id),{status:2})
-                        .then(function(response){
+                $(".time-new-" + id).text(message.last_time ?? '{{now()->format('h:i A')}}');
+                $(".last-message-" + id).text(message.body);
+                if (message.from_id == idChat) {
+                    axios.put('{{route('message.update','_id_')}}'.replace('_id_', message.id), {status: 2})
+                        .then(function (response) {
                             let ms = response.data;
                             let content = `
                                 <div class="message-item in">
@@ -743,31 +753,129 @@
                             $(".messages").append(content);
                             setScroll();
                         })
-                }else{
-                    axios.put('{{route('message.update','_id_')}}'.replace('_id_',message.id),{status:1});
-                    $(".list-group-item-"+message.from_id).addClass('unread-chat');
-                    let tag = $(".list-group-item-"+message.from_id).find('.users-list-action').find('.new-message-count');
-                    if(tag.length != 0){
+                } else {
+                    axios.put('{{route('message.update','_id_')}}'.replace('_id_', message.id), {status: 1});
+                    $(".list-group-item-" + message.from_id).addClass('unread-chat');
+                    let tag = $(".list-group-item-" + message.from_id).find('.users-list-action').find('.new-message-count');
+                    if (tag.length != 0) {
                         let noti = parseInt(tag.text()) + 1;
                         tag.text(noti)
-                    }else{
-                        $(".list-group-item-"+message.from_id).find('.users-list-action').prepend(`<div class="new-message-count">1</div>`);
+                    } else {
+                        $(".list-group-item-" + message.from_id).find('.users-list-action').prepend(`<div class="new-message-count">1</div>`);
                     }
                 }
             })
     </script>
     <script type="module">
         Echo.private('message.toggle.{{auth()->id()}}')
-            .listen('ToggleMessage',function(e){
+            .listen('ToggleMessage', function (e) {
                 let idChat = $("#id-chat-user").val();
                 let message = e.message;
-                if(message.to_id == idChat) {
+                if (message.to_id == idChat) {
                     $(".mdi.mdi-check").addClass('mdi-check-all');
                     $(".mdi.mdi-check").addClass('mdi-check');
                 }
             })
     </script>
+
+    <script>
+        $(document).on('click', function (e) {
+            let data = e.target.dataset;
+            let toggle = data.toggle;
+            let target = data.target;
+            if (toggle == 'modal' && target) {
+                e.preventDefault();
+                $(target).addClass('show');
+                $(target).css('display', 'block');
+                $(target).css('background', 'rgba(0,0,0,0.3)');
+            }
+        })
+        $(document).on('click', '.close', function () {
+            let data = $(this).data('dismiss');
+            if (data && data == 'modal') {
+                $('.modal').removeClass('show');
+                $('.modal').css('display', 'none');
+                $(target).css('background', 'none');
+            }
+        })
+    </script>
 @endpush
+<script>
+    let initialProfileUser;
+
+    $(document).ready(function() {
+        initialProfileUser = $("#myTabContent .tab-pane").html();
+    });
+    $(document).on('click', '.show-profile', function () {
+        let email = $(this).data('email');
+        if (email === '{{auth()->user()->email}}') {
+            $("#myTabContent").html(initialProfileUser);
+        } else {
+            axios.get('{{route("friend.show","email")}}'.replace('email', email))
+                .then(function (response) {
+                    let data = response.data.data;
+                    let socials = '';
+                    if(data.socials.length !== 0){
+                        socials = `
+                            <div class="mt-4 mb-4">
+                                <h6 class="mb-3">Mạng xã hội</h6>
+                                <ul class="list-inline social-links">`;
+                        socials += data.socials.map(function(item){
+                            return `
+                                <li class="list-inline-item">
+                                    <a href="${item.link}" target="_blank" class="btn btn-floating btn-${item.name.toLowerCase()}" data-toggle="tooltip"
+                                       title="${item.name}">
+                                        <i class="mdi mdi-${item.name.toLowerCase()}"></i>
+                                    </a>
+                                </li>
+                            `;
+                        }).join('');
+
+                        socials += `
+                                </ul>
+                            </div>
+                        `;
+                    }
+
+                    let profiles = '';
+                    let logProfiles = '';
+                    if(!data.hasOwnProperty('profile')){
+                        logProfiles = 'Tài khoản này đã khóa trang cá nhân';
+                    } else {
+                        if(data.profile){
+                            profiles = `
+                                <p class="text-muted about-user">${data.profile.about ?? 'Chưa cập nhật'}</p>
+                                <div class="mt-4 mb-4">
+                                    <h6>Số điện thoại</h6>
+                                    <p class="text-muted phone-user">${data.profile.phone ?? 'Chưa cập nhật'}</p>
+                                </div>
+                                <div class="mt-4 mb-4">
+                                    <h6>Địa chỉ</h6>
+                                    <p class="text-muted address-user">${data.profile.address ?? 'Chưa cập nhật'}</p>
+                                </div>
+                            `
+                        } else {
+                            logProfiles = 'Tài khoản chưa cập nhật thông tin cá nhân';
+                        }
+                    }
+                    let content = `
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="text-center mb-4">
+                                <figure class="avatar avatar-xl mb-4">
+                                    <img src="${data.avatar}" class="image-avatar-user rounded-circle" alt="image">
+                                </figure>
+                                <h5 class="mb-1 full-name-user">${data.name}</h5>
+                                <small class="text-muted font-italic text-center">${logProfiles}</small>
+                            </div>
+                            `+profiles+`
+                        `+socials+`
+                        </div>
+                    </div>`;
+                    $("#myTabContent").html(content);
+                })
+        }
+    })
+</script>
 @section('style')
     <style>
         .layout .chat .chat-body {

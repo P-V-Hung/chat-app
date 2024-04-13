@@ -93,7 +93,7 @@
                         <div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input type="text" value="{{$social->find(1)->pivot->links}}" class="form-control facebook-input"
+                                    <input type="text" value="{{$social['Facebook'] ?? ''}}" class="form-control facebook-input"
                                            id="facebook" placeholder="https://facebook.com">
                                     <div class="input-group-append">
                                             <span class="input-group-text bg-facebook">
@@ -104,7 +104,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input value="{{$social->find(2)->pivot->links}}" type="text" class="form-control twitter-input"
+                                    <input value="{{$social['Twitter'] ?? ''}}" type="text" class="form-control twitter-input"
                                            id="twitter" placeholder="https://twitter.com">
                                     <div class="input-group-append">
                                             <span class="input-group-text bg-twitter">
@@ -115,7 +115,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input value="{{$social->find(3)->pivot->links}}" type="text" class="form-control instagram-input"
+                                    <input value="{{$social['Instagram'] ?? ''}}" type="text" class="form-control instagram-input"
                                            id="instagram" placeholder="https://instagram.com">
                                     <div class="input-group-append">
                                             <span class="input-group-text bg-instagram">
@@ -126,7 +126,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input value="{{$social->find(4)->pivot->links}}" type="text" class="form-control youtube-input"
+                                    <input value="{{$social['Youtube'] ?? ''}}" type="text" class="form-control youtube-input"
                                            id="youtube" placeholder="https://youtube.com">
                                     <div class="input-group-append">
                                             <span class="input-group-text bg-youtube">
@@ -137,7 +137,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input value="{{$social->find(5)->pivot->links}}" type="text" class="form-control google-input"
+                                    <input value="{{$social['Google'] ?? ''}}" type="text" class="form-control google-input"
                                            id="google" placeholder="https://google.com">
                                     <div class="input-group-append">
                                             <span class="input-group-text bg-google">
@@ -214,9 +214,6 @@
             axios.post('{{{route('change.social')}}}',data)
                 .then(response=>{
                     console.log(response);
-                })
-                .catch(error => {
-                    console.log(error);
                 })
         })
 
