@@ -55,7 +55,7 @@
                         </a>
                     </li>
                     <li class="list-inline-item">
-                        <a href="#" class="btn btn-floating btn-sm btn-google">
+                        <a href="{{route('google.redirect')}}" class="btn btn-floating btn-sm btn-google">
                             <i class="mdi mdi-google"></i>
                         </a>
                     </li>

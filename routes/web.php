@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\{
     LoginController,
     RegisterController,
+    GoogleController,
 };
 use App\Http\Controllers\{
     HomeController,
@@ -19,6 +20,12 @@ Route::get('login', [LoginController::class,'showFormLogin'])->name('login');
 Route::post('login', [LoginController::class,'login'])->name('login');
 Route::match(['get','post'],'logout', [LoginController::class,'logout'])->name('logout');
 Route::get('register', [RegisterController::class,'showFormRegister'])->name('register');
+Route::post('register', [RegisterController::class,'register'])->name('register');
+
+//Socials
+Route::get('/auth/redirect', [GoogleController::class,'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google', [GoogleController::class,'google'])->name('google');
+
 
 Route::middleware('auth')->group(function(){
     Route::get('/', [HomeController::class,'home'])->name('home');

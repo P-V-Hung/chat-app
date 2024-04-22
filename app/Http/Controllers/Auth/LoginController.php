@@ -25,6 +25,9 @@ class LoginController extends Controller
 
     public function logout(){
         toastr()->info('Đã đăng xuất tài khoản!');
+        if(Auth::check()){
+            Auth::logout();
+        }
         return redirect(route('login'));
     }
 }

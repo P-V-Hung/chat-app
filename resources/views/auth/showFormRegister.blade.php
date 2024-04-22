@@ -14,22 +14,38 @@
         <h5>Tạo tài khoản</h5>
 
         <!-- form -->
-        <form>
+        <form action="{{route('register')}}" method="POST">
+            @csrf
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Họ" name="first_name" required autofocus>
+                <input type="text" class="form-control mb-0" placeholder="Họ" value="{{old('first_name')}}" name="first_name" autofocus>
+                @error('first_name')
+                <p class="text-danger text-start ps-2 fw-bold">{{$message}}</p>
+                @enderror
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Tên" name="last_name" required>
+                <input type="text" class="form-control mb-0" placeholder="Tên" {{old('last_name')}} name="last_name">
+                @error('last_name')
+                <p class="text-danger text-start ps-2 fw-bold">{{$message}}</p>
+                @enderror
             </div>
             <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email" name="email" required>
+                <input type="text" class="form-control mb-0" placeholder="Email" {{old('email')}} name="email">
+                @error('email')
+                <p class="text-danger text-start ps-2 fw-bold">{{$message}}</p>
+                @enderror
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Mật khẩu" name="password" required>
+                <input type="password" class="form-control mb-0" placeholder="Mật khẩu" {{old('password')}} name="password">
+                @error('password')
+                <p class="text-danger text-start ps-2 fw-bold">{{$message}}</p>
+                @enderror
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Nhập lại mật khẩu"
-                       ng-model="password_confirmation" required>
+                <input type="password" class="form-control mb-0" {{old('password_confirmation')}} placeholder="Nhập lại mật khẩu"
+                       name="password_confirmation">
+                @error('password_confirmation')
+                <p class="text-danger text-start ps-2 fw-bold">{{$message}}</p>
+                @enderror
             </div>
             <button class="btn btn-primary">Đăng kí</button>
             <div class="my-5">
